@@ -45,7 +45,6 @@ body{
   overflow-x: hidden;
 }
 
-/* GRAIN */
 body::after{
   content:'';position:fixed;inset:0;
   background-image:url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='g'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23g)' opacity='0.06'/%3E%3C/svg%3E");
@@ -63,7 +62,6 @@ body::after{
 }
 .topbar-left{display:flex;align-items:center;gap:18px;}
 
-/* Logo */
 .logo-wrap{display:flex;align-items:center;gap:10px;text-decoration:none;}
 .logo-svg{width:36px;height:36px;flex-shrink:0;}
 .logo-words strong{
@@ -104,7 +102,6 @@ body::after{
 /* ── MAIN ── */
 .main{padding:28px 32px;max-width:1240px;margin:0 auto;}
 
-/* ── INSTRUMENT STRIP ── */
 .instr-strip{
   display:grid;
   grid-template-columns:repeat(auto-fit,minmax(155px,1fr));
@@ -143,7 +140,6 @@ body::after{
 .fill-bear{background:var(--red);}
 .fill-neut{background:var(--slate);}
 
-/* ── DETAIL PANELS ── */
 .detail{display:grid;grid-template-columns:1fr 340px;gap:16px;}
 @media(max-width:900px){.detail{grid-template-columns:1fr;}}
 
@@ -170,7 +166,6 @@ body::after{
   padding:6px 16px;border-radius:4px;letter-spacing:.07em;
 }
 
-/* SIGNAL CARDS */
 .signal-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:22px;}
 .sig-card{
   background:var(--navy3);border:1px solid var(--border);
@@ -186,7 +181,6 @@ body::after{
 .c-bear{color:var(--red);}
 .c-neut{color:var(--slate);}
 
-/* COT BARS */
 .section-title{
   font-size:10px;font-family:var(--mono);color:var(--gold);
   letter-spacing:.1em;text-transform:uppercase;margin-bottom:12px;
@@ -196,14 +190,12 @@ body::after{
 .cot-bar-track{flex:1;height:4px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;}
 .cot-bar-fill{height:4px;border-radius:99px;}
 .bar-green{background:var(--green);}
-.bar-gold覆{background:var(--gold);}
 .bar-gold{background:var(--gold);}
 .bar-gray{background:rgba(143,170,191,.35);}
 .cot-pct{font-family:var(--mono);font-size:10px;color:var(--slate);width:36px;text-align:right;}
 
 .divider{border:none;border-top:1px solid var(--border);margin:18px 0;}
 
-/* SIDE METRICS */
 .metric-row{
   display:flex;justify-content:space-between;align-items:center;
   padding:8px 0;border-bottom:1px solid var(--border);font-size:12px;
@@ -212,7 +204,6 @@ body::after{
 .metric-label{color:var(--slate);}
 .metric-val{font-family:var(--mono);font-weight:700;}
 
-/* WEIGHT BAR */
 .weight-row{margin-bottom:10px;}
 .weight-header{display:flex;justify-content:space-between;font-size:11px;margin-bottom:5px;}
 .weight-name{color:var(--slate);}
@@ -224,7 +215,6 @@ body::after{
 .bar-blue{background:var(--blue);}
 .bar-gray2{background:rgba(143,170,191,.4);}
 
-/* LOADING / ERROR */
 .loading-state{
   display:flex;flex-direction:column;align-items:center;justify-content:center;
   padding:60px 20px;color:var(--slate);font-family:var(--mono);font-size:12px;gap:14px;
@@ -241,7 +231,6 @@ body::after{
   font-family:var(--mono);margin-bottom:14px;
 }
 
-/* HOW TO USE */
 .howto{
   background:var(--navy2);
   border:1px solid var(--border);
@@ -255,7 +244,6 @@ body::after{
   letter-spacing:.1em;text-transform:uppercase;margin-bottom:8px;
 }
 
-/* FOOTER */
 .footer{
   margin-top:28px;padding-top:16px;
   border-top:1px solid var(--border);
@@ -266,11 +254,9 @@ body::after{
 .footer a{color:var(--slate);text-decoration:none;transition:color .2s;}
 .footer a:hover{color:var(--gold);}
 
-/* FADE */
 .fade-in{animation:fadeIn .3s ease;}
 @keyframes fadeIn{from{opacity:0;transform:translateY(5px);}to{opacity:1;transform:translateY(0);}}
 
-/* RESPONSIVE */
 @media(max-width:700px){
   .topbar{padding:0 16px;}
   .main{padding:18px 16px;}
@@ -305,7 +291,7 @@ body::after{
       <div class="status-dot loading" id="status-dot"></div>
       <span id="status-text">Connecting Live Data Streams…</span>
     </div>
-    <button class="refresh-btn" onclick="loadAll()">↻ Refresh</button>
+    <button class="refresh-btn" onclick="loadAll()">Public Sync ↻</button>
   </div>
 </div>
 
@@ -396,8 +382,7 @@ function getSignals(key) {
   return { cot, yld, cy, cotB, yB, cyB:cy.bias, bias:totalBias(cotB,yB,cy.bias) };
 }
 
-/* ── HIGH AVAILABILITY CROSS-ORIGIN NETWORK FETCH ENGINE ── */
-async function fetchWithTimeout(url, options = {}, timeout = 6000) {
+async function fetchWithTimeout(url, options = {}, timeout = 8000) {
   const controller = new AbortController();
   const id = setTimeout(() => controller.abort(), timeout);
   try {
@@ -413,27 +398,28 @@ async function fetchWithTimeout(url, options = {}, timeout = 6000) {
 async function fetchCOT(code) {
   const target = `https://publicreporting.cftc.gov/api/odata/v1/HistoricalViewOiCotLegacyFuturesOnly?\$filter=CFTC_Contract_Market_Code eq '${code}'&\$orderby=Report_Date_as_MM_DD_YYYY desc&\$top=1`;
   
-  // Primary Gateway: AllOrigins Proxy Mirror Engine
+  // Pipeline Gateway A: ThingProxy System
   try {
-    const r = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`);
+    const r = await fetchWithTimeout(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(target)}`);
     if (r.ok) {
-      const wrapper = await r.json();
-      const parsed = JSON.parse(wrapper.contents);
+      const parsed = await r.json();
       if (parsed.value) return parsed.value;
     }
   } catch(e) {
-    console.warn(`Primary CORS Proxy throttled for contract ${code}. Running secondary cluster connection string...`);
+    console.warn(`Gateway A down for contract ${code}. Pivoting...`);
   }
 
-  // Backup Gateway: Secondary CorsProxy Failover Engine
+  // Pipeline Gateway B: Cors-Anywhere Failover Node
   try {
-    const r = await fetchWithTimeout(`https://corsproxy.io/?${encodeURIComponent(target)}`);
+    const r = await fetchWithTimeout(`https://cors-anywhere.herokuapp.com/${target}`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
     if (r.ok) {
       const data = await r.json();
       return data.value || data;
     }
   } catch(e) {
-    throw new Error(`All global cloud proxy infrastructure rejected the endpoint verification handshake for contract ${code}`);
+    throw new Error(`CORS networks completely rejected handshake connections.`);
   }
 }
 
@@ -441,20 +427,18 @@ async function fetchFRED(id) {
   const target = `https://fred.stlouisfed.org/graph/fredgraph.csv?id=${id}`;
   let text = "";
   
-  // Primary Gateway: AllOrigins Proxy Mirror Engine
   try {
-    const r = await fetchWithTimeout(`https://api.allorigins.win/get?url=${encodeURIComponent(target)}`);
-    if (r.ok) {
-      const wrapper = await r.json();
-      text = wrapper.contents;
-    }
+    const r = await fetchWithTimeout(`https://thingproxy.freeboard.io/fetch/${encodeURIComponent(target)}`);
+    if (r.ok) text = await r.text();
   } catch(e) {
-    console.warn(`FRED baseline drop on primary proxy stream. Transferring to backup matrix array...`);
-    const r = await fetchWithTimeout(`https://corsproxy.io/?${encodeURIComponent(target)}`);
+    console.warn(`FRED tracking disconnect on primary pipeline. Re-routing...`);
+    const r = await fetchWithTimeout(`https://cors-anywhere.herokuapp.com/${target}`, {
+      headers: { 'X-Requested-With': 'XMLHttpRequest' }
+    });
     if (r.ok) text = await r.text();
   }
   
-  if (!text || text.includes("Error")) throw new Error(`FRED dynamic CSV download compression error`);
+  if (!text || text.includes("Error")) throw new Error(`FRED dynamic spreadsheet array drop.`);
   
   const lines = text.trim().split('\n').slice(1).filter(l => !l.includes('.'));
   return lines.slice(-14).map(l => { 
@@ -643,7 +627,6 @@ async function loadAll() {
   renderStrip(); renderDetail();
   
   try {
-    // 1. Stream Macro Treasury metrics from FRED using cloud proxies
     const [dgs10arr, dgs2arr] = await Promise.all([fetchFRED('DGS10'), fetchFRED('DGS2')]);
     const dgs10 = dgs10arr[dgs10arr.length-1]?.val||4.35;
     const dgs2  = dgs2arr[dgs2arr.length-1]?.val||4.65;
@@ -652,7 +635,6 @@ async function loadAll() {
     appState.yields = { dgs10, dgs2, spreadTrend, date:dgs10arr[dgs10arr.length-1]?.date };
     appState.cycle  = getElectionCycle();
     
-    // 2. Stream Institutional positioning matrices from the CFTC using cloud proxies
     const results = await Promise.allSettled(INSTRUMENTS.map(i=>fetchCOT(i.cftcCode)));
     results.forEach((res,idx) => {
       appState.cot[INSTRUMENTS[idx].key] = (res.status==='fulfilled'&&res.value?.length>0) ? res.value[0] : CONTEXTUAL_FALLBACK_COT[INSTRUMENTS[idx].key];
@@ -663,9 +645,7 @@ async function loadAll() {
     setStatus(`Live Connections Active · Synchronized [${appState.lastUpdate}]`, 'live');
     
   } catch(e) {
-    console.error("All public gateways returned a network timeout. Safeguarding active matrices...", e);
-    
-    // Defensive structural fallback mode if federal servers or proxies are completely down
+    console.error("All public gateways returned a network timeout.", e);
     appState.isFallback=true;
     appState.yields={ dgs10:4.42, dgs2:4.71, spreadTrend:-0.05, date:'2026-06-02' };
     appState.cycle=getElectionCycle();
